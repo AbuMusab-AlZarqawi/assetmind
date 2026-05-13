@@ -1,0 +1,19 @@
+{
+  "name": "assetmind-contracts",
+  "version": "1.0.0",
+  "description": "AssetMind smart contracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.cjs --network ritual",
+    "test": "hardhat test",
+    "clean": "hardhat clean"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "hardhat": "^2.22.0",
+    "ethers": "^6.13.0",
+    "dotenv": "^16.4.0",
+    "chai": "^4.3.0"
+  }
+}

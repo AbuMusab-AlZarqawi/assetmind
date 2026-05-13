@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Import design tokens ─────────────────────────────────────────────── */
+:root {
+  --obsidian:  #080B10;
+  --vault:     #0D1117;
+  --chamber:   #111827;
+  --border:    #1F2937;
+  --gold:      #C9A84C;
+  --gold-lt:   #E2C97A;
+  --gold-dk:   #8B6914;
+  --platinum:  #E8E8E8;
+  --mist:      #9CA3AF;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: var(--obsidian); }
+::-webkit-scrollbar-thumb  { background: var(--gold-dk); border-radius: 2px; }
+
+/* ── Selection ────────────────────────────────────────────────────────── */
+::selection { background: rgba(201,168,76,0.25); color: var(--gold-lt); }
+
+/* ── Base typography ─────────────────────────────────────────────────── */
+body { background: var(--obsidian); }
+
+/* ── RainbowKit overrides ────────────────────────────────────────────── */
+[data-rk] {
+  --rk-colors-accentColor:           #C9A84C !important;
+  --rk-colors-accentColorForeground: #080B10 !important;
+  --rk-colors-modalBackground:       #0D1117 !important;
+  --rk-colors-modalBorder:           #1F2937 !important;
+  --rk-colors-connectButtonBackground:          #111827 !important;
+  --rk-colors-connectButtonInnerBackground:     #0D1117 !important;
+  --rk-colors-connectButtonText:                #E8E8E8 !important;
+  --rk-colors-connectButtonTextError:           #EF4444 !important;
+  --rk-radii-connectButton:          2px !important;
+  --rk-radii-modal:                  2px !important;
+  --rk-radii-menuButton:             2px !important;
+}
+
+/* ── Utility classes ─────────────────────────────────────────────────── */
+@layer utilities {
+  .text-gold-shimmer {
+    background: linear-gradient(90deg, #C9A84C 0%, #E2C97A 40%, #C9A84C 60%, #8B6914 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  .border-gold-subtle {
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px;
+  }
+
+  .card-vault {
+    background: linear-gradient(145deg, #111827 0%, #0D1117 100%);
+    border: 1px solid rgba(201,168,76,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-vault::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .input-vault {
+    background: rgba(8,11,16,0.8);
+    border: 1px solid rgba(201,168,76,0.15);
+    color: #E8E8E8;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-vault:focus {
+    outline: none;
+    border-color: rgba(201,168,76,0.5);
+    box-shadow: 0 0 0 2px rgba(201,168,76,0.08);
+  }
+
+  .input-vault::placeholder { color: #4B5563; }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #C9A84C 0%, #E2C97A 50%, #C9A84C 100%);
+    background-size: 200% auto;
+    color: #080B10;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    transition: background-position 0.4s, transform 0.1s, box-shadow 0.2s;
+  }
+
+  .btn-gold:hover {
+    background-position: right center;
+    box-shadow: 0 0 20px rgba(201,168,76,0.3);
+  }
+
+  .btn-gold:active { transform: scale(0.98); }
+
+  .btn-gold:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  }
+
+  .risk-badge-low  { color: #22C55E; background: rgba(34,197,94,0.08);  border: 1px solid rgba(34,197,94,0.2);  }
+  .risk-badge-mid  { color: #F59E0B; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+  .risk-badge-high { color: #EF4444; background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.2);  }
+
+  .tee-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #C9A84C;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+}
+
+/* ── Scan line animation overlay ─────────────────────────────────────── */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scan-overlay::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+  animation: scan 4s linear infinite;
+  opacity: 0.6;
+}
