@@ -5,54 +5,50 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAssets } from "@/hooks/useAssets";
 import { AssetCard } from "./AssetCard";
 import { MarketplacePanel } from "./MarketplacePanel";
-import type { AssetCategoryEnum } from "@/types";
+import type { Asset } from "@/types";
 
 const CATEGORY_FILTERS = [
-  { label: "ALL",      value: -1  },
-  { label: "PROPERTY", value: 0   },
-  { label: "LAND",     value: 1   },
-  { label: "ART",      value: 2   },
-  { label: "VEHICLE",  value: 3   },
-  { label: "OTHER",    value: 4   },
+  { label: "ALL",      value: -1 },
+  { label: "PROPERTY", value: 0  },
+  { label: "LAND",     value: 1  },
+  { label: "ART",      value: 2  },
+  { label: "VEHICLE",  value: 3  },
+  { label: "OTHER",    value: 4  },
 ];
 
 const SORT_OPTIONS = [
-  { label: "NEWEST FIRST",   value: "newest"  },
-  { label: "HIGHEST VALUE",  value: "value"   },
-  { label: "LOWEST RISK",    value: "risk"    },
+  { label: "NEWEST FIRST",  value: "newest" },
+  { label: "HIGHEST VALUE", value: "value"  },
+  { label: "LOWEST RISK",   value: "risk"   },
 ];
 
 export function AssetFeed() {
   const { assets, isLoading, error, refetch } = useAssets();
   const [categoryFilter, setCategoryFilter] = useState<number>(-1);
   const [sortBy, setSortBy] = useState("newest");
-  const [marketplaceAsset, setMarketplaceAsset] = useState<any>(null);
+  const [marketplaceAsset, setMarketplaceAsset] = useState<Asset | null>(null);
 
   const filtered = [...assets]
     .filter(a => categoryFilter === -1 || Number(a.category) === categoryFilter)
     .sort((a, b) => {
-      if (sortBy === "newest")  return Number(b.submittedAt) - Number(a.submittedAt);
-      if (sortBy === "value")   return Number(b.aiValuation || b.estimatedValue) - Number(a.aiValuation || a.estimatedValue);
-      if (sortBy === "risk")    return (a.riskScore || 100) - (b.riskScore || 100);
+      if (sortBy === "newest") return Number(b.submittedAt) - Number(a.submittedAt);
+      if (sortBy === "value")  return Number(b.aiValuation || b.estimatedValue) - Number(a.aiValuation || a.estimatedValue);
+      if (sortBy === "risk")   return (a.riskScore || 100) - (b.riskScore || 100);
       return 0;
     });
 
   return (
     <section>
-      {/* Section header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-px w-8 bg-gold opacity-40" />
-            <span className="font-mono text-[10px] tracking-[0.25em] text-gold uppercase">
-              Registry
-            </span>
+            <span className="font-mono text-[10px] tracking-[0.25em] text-gold uppercase">Registry</span>
           </div>
           <h2 className="font-display text-3xl font-light text-platinum tracking-wide">
             Tokenized Assets
           </h2>
         </div>
-
         <div className="flex items-center gap-2">
           <button
             onClick={() => refetch()}
@@ -72,7 +68,6 @@ export function AssetFeed() {
         </div>
       </div>
 
-      {/* Category filters */}
       <div className="flex flex-wrap gap-2 mb-6">
         {CATEGORY_FILTERS.map(f => (
           <button
@@ -89,7 +84,6 @@ export function AssetFeed() {
         ))}
       </div>
 
-      {/* States */}
       {isLoading && (
         <div className="py-24 text-center">
           <div className="inline-flex flex-col items-center gap-4">
@@ -122,9 +116,7 @@ export function AssetFeed() {
                style={{ transform: "rotate(45deg)" }}>
             <span className="text-gold/40 text-2xl" style={{ transform: "rotate(-45deg)" }}>◈</span>
           </div>
-          <p className="font-display text-xl text-mist font-light tracking-wide">
-            No assets found
-          </p>
+          <p className="font-display text-xl text-mist font-light tracking-wide">No assets found</p>
           <p className="text-mist/60 text-sm mt-2 font-body">
             {assets.length === 0
               ? "Be the first to tokenize a real world asset."
@@ -136,11 +128,15 @@ export function AssetFeed() {
       {!isLoading && !error && filtered.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((asset, i) => (
-            <AssetCard key={asset.id.toString()} asset={asset} index={i} onMarketplace={setMarketplaceAsset} />
+            <AssetCard
+              key={asset.id.toString()}
+              asset={asset}
+              index={i}
+              onMarketplace={setMarketplaceAsset}
+            />
           ))}
         </div>
       )}
-    </section>
 
       <AnimatePresence>
         {marketplaceAsset && (
@@ -150,5 +146,6 @@ export function AssetFeed() {
           />
         )}
       </AnimatePresence>
+    </section>
   );
 }
