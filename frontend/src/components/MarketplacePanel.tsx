@@ -172,7 +172,7 @@ function ListingsPanel({ listings, assetId, address, onRefresh }: any) {
             <div className="text-right">
               <div className="font-mono text-[10px] text-mist">TOTAL (ALL SHARES)</div>
               <div className="font-mono text-sm text-gold">
-                {formatRitual(l.shareAmount * l.pricePerShare)} RITUAL
+                {formatRitual(BigInt(l.shareAmount) * BigInt(l.pricePerShare))} RITUAL
               </div>
             </div>
           </div>
