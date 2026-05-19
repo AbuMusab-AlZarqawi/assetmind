@@ -36,6 +36,7 @@ function shortenAddress(addr: string) {
 interface Props {
   asset: Asset;
   index: number;
+  onMarketplace?: (asset: Asset) => void;
 }
 
 export function AssetCard({ asset, index, onMarketplace }: Props) {
