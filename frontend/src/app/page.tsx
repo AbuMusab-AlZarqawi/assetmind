@@ -6,9 +6,10 @@ import { Navbar }          from "@/components/Navbar";
 import { Hero }            from "@/components/Hero";
 import { SubmitAssetForm } from "@/components/SubmitAssetForm";
 import { AssetFeed }       from "@/components/AssetFeed";
+import { Portfolio }       from "@/components/Portfolio";
 import { useAssets }       from "@/hooks/useAssets";
 
-type Tab = "feed" | "submit";
+type Tab = "feed" | "submit" | "portfolio";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("feed");
@@ -32,17 +33,21 @@ export default function Home() {
 
         {/* Tab controls */}
         <div className="flex items-center gap-0 mb-10">
-          {(["feed", "submit"] as Tab[]).map(tab => (
+            {([
+            { key: "feed",      label: "◈ ASSET REGISTRY"  },
+            { key: "submit",    label: "⊕ TOKENIZE ASSET"  },
+            { key: "portfolio", label: "◑ MY PORTFOLIO"     },
+          ] as { key: Tab; label: string }[]).map(tab => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
               className={`px-8 py-3 font-mono text-xs tracking-[0.25em] uppercase transition-all duration-200 relative ${
-                activeTab === tab
+                activeTab === tab.key
                   ? "text-obsidian bg-gold"
                   : "text-mist border border-border hover:border-gold/40 hover:text-platinum"
               }`}
             >
-              {tab === "feed"   ? "◈ ASSET REGISTRY" : "⊕ TOKENIZE ASSET"}
+              {tab.label}
             </button>
           ))}
         </div>

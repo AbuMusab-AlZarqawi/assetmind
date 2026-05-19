@@ -1,10 +1,12 @@
 {
   "name": "assetmind-contracts",
   "version": "1.0.0",
-  "description": "AssetMind smart contracts",
+  "type": "module",
+  "description": "AssetMind smart contracts — Ritual Chain Testnet",
   "scripts": {
     "compile": "hardhat compile",
     "deploy": "hardhat run scripts/deploy.cjs --network ritual",
+    "deploy:marketplace": "hardhat run scripts/deploy-marketplace.cjs --network ritual",
     "test": "hardhat test",
     "clean": "hardhat clean"
   },

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAssets } from "@/hooks/useAssets";
 import { AssetCard } from "./AssetCard";
+import { MarketplacePanel } from "./MarketplacePanel";
 import type { AssetCategoryEnum } from "@/types";
 
 const CATEGORY_FILTERS = [
@@ -25,6 +26,7 @@ export function AssetFeed() {
   const { assets, isLoading, error, refetch } = useAssets();
   const [categoryFilter, setCategoryFilter] = useState<number>(-1);
   const [sortBy, setSortBy] = useState("newest");
+  const [marketplaceAsset, setMarketplaceAsset] = useState<any>(null);
 
   const filtered = [...assets]
     .filter(a => categoryFilter === -1 || Number(a.category) === categoryFilter)
@@ -134,10 +136,19 @@ export function AssetFeed() {
       {!isLoading && !error && filtered.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((asset, i) => (
-            <AssetCard key={asset.id.toString()} asset={asset} index={i} />
+            <AssetCard key={asset.id.toString()} asset={asset} index={i} onMarketplace={setMarketplaceAsset} />
           ))}
         </div>
       )}
     </section>
+
+      <AnimatePresence>
+        {marketplaceAsset && (
+          <MarketplacePanel
+            asset={marketplaceAsset}
+            onClose={() => setMarketplaceAsset(null)}
+          />
+        )}
+      </AnimatePresence>
   );
 }

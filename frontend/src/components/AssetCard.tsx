@@ -38,7 +38,7 @@ interface Props {
   index: number;
 }
 
-export function AssetCard({ asset, index }: Props) {
+export function AssetCard({ asset, index, onMarketplace }: Props) {
   const cat = Number(asset.category);
 
   return (
@@ -164,6 +164,17 @@ export function AssetCard({ asset, index }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Marketplace button */}
+        {asset.valuationComplete && onMarketplace && (
+          <button
+            onClick={() => onMarketplace(asset)}
+            className="w-full mt-4 py-2.5 border border-gold/20 text-gold hover:bg-gold hover:text-obsidian transition-all duration-200 font-mono text-[10px] tracking-[0.25em] uppercase group"
+          >
+            <span className="group-hover:hidden">◈ VIEW MARKETPLACE</span>
+            <span className="hidden group-hover:inline">BUY · SELL · OFFER SHARES</span>
+          </button>
+        )}
       </div>
     </motion.div>
   );
