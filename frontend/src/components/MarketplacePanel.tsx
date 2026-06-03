@@ -49,7 +49,6 @@ export function MarketplacePanel({ asset, onClose }: Props) {
         className="card-vault w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-border">
           <div>
             <div className="tee-badge mb-2">◈ MARKETPLACE</div>
@@ -59,14 +58,12 @@ export function MarketplacePanel({ asset, onClose }: Props) {
           <button onClick={onClose} className="text-mist hover:text-platinum transition-colors text-xl ml-4 mt-1">✕</button>
         </div>
 
-        {/* Stats bar */}
         <div className="grid grid-cols-3 border-b border-border">
           <Stat label="AI VALUATION" value={`$${(Number(asset.aiValuation) / 100).toLocaleString()}`} gold />
           <Stat label="TOTAL SHARES"  value={(1_000_000).toLocaleString()} />
           <Stat label="RISK SCORE"    value={`${asset.riskScore}/100`} />
         </div>
 
-        {/* Tabs */}
         <div className="flex border-b border-border">
           {([
             { key: "listings", label: `LISTINGS (${activeListings.length})` },
@@ -86,7 +83,6 @@ export function MarketplacePanel({ asset, onClose }: Props) {
           ))}
         </div>
 
-        {/* Panel content */}
         <div className="p-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -107,8 +103,6 @@ export function MarketplacePanel({ asset, onClose }: Props) {
     </motion.div>
   );
 }
-
-// ── Listings ─────────────────────────────────────────────────────────────────
 
 function ListingsPanel({ listings, address, onRefresh }: { listings: any[]; address?: string; onRefresh: () => void }) {
   const { buyShares, isPending, isConfirming } = useBuyShares();
@@ -137,7 +131,6 @@ function ListingsPanel({ listings, address, onRefresh }: { listings: any[]; addr
         const shareAmt   = BigInt(l.shareAmount);
         const pricePerSh = BigInt(l.pricePerShare);
         const total      = shareAmt * pricePerSh;
-
         return (
           <div key={String(l.listingId)} className="border border-border p-4 space-y-3">
             <div className="flex justify-between items-start">
@@ -162,20 +155,15 @@ function ListingsPanel({ listings, address, onRefresh }: { listings: any[]; addr
               </div>
             </div>
             <div className="font-mono text-[9px] text-border">{FEE}% protocol fee applied on purchase</div>
-
             {address?.toLowerCase() === l.seller.toLowerCase() ? (
               <button
                 onClick={async () => { await cancelListing(BigInt(l.listingId)); onRefresh(); }}
                 className="w-full py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all font-mono text-[10px] tracking-widest uppercase"
-              >
-                CANCEL LISTING
-              </button>
+              >CANCEL LISTING</button>
             ) : buying === BigInt(l.listingId) ? (
               <div className="space-y-2">
                 <input
-                  type="number"
-                  value={buyAmt}
-                  onChange={e => setBuyAmt(e.target.value)}
+                  type="number" value={buyAmt} onChange={e => setBuyAmt(e.target.value)}
                   placeholder={`Max ${Number(shareAmt).toLocaleString()} shares`}
                   className="input-vault w-full px-3 py-2 text-sm font-mono"
                 />
@@ -185,26 +173,19 @@ function ListingsPanel({ listings, address, onRefresh }: { listings: any[]; addr
                   </div>
                 )}
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => handleBuy(l)}
-                    disabled={isPending || isConfirming}
-                    className="flex-1 btn-gold py-2 font-mono text-[10px] tracking-widest"
-                  >
+                  <button onClick={() => handleBuy(l)} disabled={isPending || isConfirming}
+                    className="flex-1 btn-gold py-2 font-mono text-[10px] tracking-widest">
                     {isPending || isConfirming ? "PROCESSING…" : "CONFIRM BUY"}
                   </button>
-                  <button
-                    onClick={() => { setBuying(null); setBuyAmt(""); }}
-                    className="px-4 border border-border text-mist hover:text-platinum transition-colors font-mono text-[10px]"
-                  >
+                  <button onClick={() => { setBuying(null); setBuyAmt(""); }}
+                    className="px-4 border border-border text-mist hover:text-platinum transition-colors font-mono text-[10px]">
                     CANCEL
                   </button>
                 </div>
               </div>
             ) : (
-              <button
-                onClick={() => { setBuying(BigInt(l.listingId)); setBuyAmt(""); }}
-                className="btn-gold w-full py-2 font-mono text-[10px] tracking-widest"
-              >
+              <button onClick={() => { setBuying(BigInt(l.listingId)); setBuyAmt(""); }}
+                className="btn-gold w-full py-2 font-mono text-[10px] tracking-widest">
                 BUY SHARES
               </button>
             )}
@@ -214,8 +195,6 @@ function ListingsPanel({ listings, address, onRefresh }: { listings: any[]; addr
     </div>
   );
 }
-
-// ── Offers ────────────────────────────────────────────────────────────────────
 
 function OffersPanel({ offers, address, onRefresh }: { offers: any[]; address?: string; onRefresh: () => void }) {
   const { acceptOffer, isPending: accepting } = useAcceptOffer();
@@ -231,7 +210,6 @@ function OffersPanel({ offers, address, onRefresh }: { offers: any[]; address?: 
         const total      = shareAmt * pricePerSh;
         const isMyOffer  = address?.toLowerCase() === o.buyer.toLowerCase();
         const daysLeft   = Math.max(0, Math.floor((Number(o.expiresAt) * 1000 - Date.now()) / 86400000));
-
         return (
           <div key={String(o.offerId)} className="border border-border p-4 space-y-3">
             <div className="flex justify-between items-start">
@@ -253,21 +231,16 @@ function OffersPanel({ offers, address, onRefresh }: { offers: any[]; address?: 
                 <div className="font-mono text-[9px] text-mist">{formatRitual(pricePerSh)}/share</div>
               </div>
             </div>
-
             {isMyOffer ? (
-              <button
-                onClick={async () => { await cancelOffer(BigInt(o.offerId)); onRefresh(); }}
+              <button onClick={async () => { await cancelOffer(BigInt(o.offerId)); onRefresh(); }}
                 disabled={cancelling}
-                className="w-full py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all font-mono text-[10px] tracking-widest uppercase"
-              >
+                className="w-full py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all font-mono text-[10px] tracking-widest uppercase">
                 {cancelling ? "CANCELLING…" : "CANCEL OFFER & RECLAIM RITUAL"}
               </button>
             ) : (
-              <button
-                onClick={async () => { await acceptOffer(BigInt(o.offerId)); onRefresh(); }}
+              <button onClick={async () => { await acceptOffer(BigInt(o.offerId)); onRefresh(); }}
                 disabled={accepting}
-                className="btn-gold w-full py-2 font-mono text-[10px] tracking-widest"
-              >
+                className="btn-gold w-full py-2 font-mono text-[10px] tracking-widest">
                 {accepting ? "PROCESSING…" : `ACCEPT — RECEIVE ${formatRitual(total * 975n / 1000n)} RITUAL`}
               </button>
             )}
@@ -277,8 +250,6 @@ function OffersPanel({ offers, address, onRefresh }: { offers: any[]; address?: 
     </div>
   );
 }
-
-// ── Sell ──────────────────────────────────────────────────────────────────────
 
 function SellPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => void }) {
   const [shares, setShares] = useState("");
@@ -307,7 +278,7 @@ function SellPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => v
   return (
     <div className="space-y-5">
       <div className="border border-gold/10 bg-gold/5 p-4 text-xs text-mist font-body leading-relaxed">
-        <span className="text-gold font-mono">Note:</span> Transfer your shares to the marketplace contract address first via AssetMind, then list them here.
+        <span className="text-gold font-mono">Note:</span> Transfer your shares to the marketplace contract first via AssetMind, then list them here.
       </div>
       <Field label="NUMBER OF SHARES TO LIST">
         <input type="number" value={shares} onChange={e => setShares(e.target.value)}
@@ -319,7 +290,7 @@ function SellPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => v
       </Field>
       {total > 0 && (
         <div className="border border-border p-4 space-y-2">
-          <Row label="Total listing value" value={`${total.toFixed(4)} RITUAL`} />
+          <Row label="Total listing value"  value={`${total.toFixed(4)} RITUAL`} />
           <Row label="Protocol fee (2.5%)"  value={`${(total * 0.025).toFixed(4)} RITUAL`} dim />
           <div className="divider-gold" />
           <Row label="You receive" value={`${(total * 0.975).toFixed(4)} RITUAL`} gold />
@@ -333,8 +304,6 @@ function SellPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => v
     </div>
   );
 }
-
-// ── Offer ─────────────────────────────────────────────────────────────────────
 
 function OfferPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => void }) {
   const [shares, setShares] = useState("");
@@ -366,8 +335,7 @@ function OfferPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => 
   return (
     <div className="space-y-5">
       <div className="border border-gold/10 bg-gold/5 p-4 text-xs text-mist font-body leading-relaxed">
-        <span className="text-gold font-mono">How it works:</span> Your RITUAL is held in escrow onchain.
-        The asset owner can accept within 7 days. If not, cancel to reclaim.
+        <span className="text-gold font-mono">How it works:</span> Your RITUAL is held in escrow onchain. The asset owner can accept within 7 days. If not, cancel to reclaim.
       </div>
       <Field label="SHARES YOU WANT TO BUY">
         <input type="number" value={shares} onChange={e => setShares(e.target.value)}
@@ -391,8 +359,6 @@ function OfferPanel({ assetId, onRefresh }: { assetId: bigint; onRefresh: () => 
     </div>
   );
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function Stat({ label, value, gold }: { label: string; value: string; gold?: boolean }) {
   return (
@@ -428,4 +394,4 @@ function Empty({ msg }: { msg: string }) {
       <p className="text-mist text-sm font-body">{msg}</p>
     </div>
   );
-}
+                    }
