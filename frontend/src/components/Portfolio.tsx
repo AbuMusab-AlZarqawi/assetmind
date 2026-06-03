@@ -12,16 +12,11 @@ function formatRitual(wei: bigint) {
   return parseFloat(formatEther(wei)).toFixed(4);
 }
 
-function shortenAddress(addr: string) {
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
-
 const CATEGORY_LABELS = ["Property", "Land", "Art", "Vehicle", "Other"];
 
 export function Portfolio() {
   const { address, isConnected } = useAccount();
   const { assets } = useAssets();
-
   const { listings, refetch: refetchListings } = useSellerListings(address);
   const { offers,   refetch: refetchOffers   } = useBuyerOffers(address);
   const { cancelListing } = useCancelListing();
@@ -36,17 +31,14 @@ export function Portfolio() {
     );
   }
 
-  // Assets owned by the user
-  const myAssets = assets.filter(a => a.owner.toLowerCase() === address?.toLowerCase());
-
-  // Active listings and offers
-  const activeListings = listings.filter((l: any) => l.active);
-  const activeOffers   = offers.filter((o: any) => o.active);
+  const myAssets      = assets.filter(a => a.owner.toLowerCase() === address?.toLowerCase());
+  const activeListings = (listings as any[]).filter((l) => l.active);
+  const activeOffers   = (offers   as any[]).filter((o) => o.active);
 
   return (
     <div className="space-y-10">
 
-      {/* ── My Tokenized Assets ── */}
+      {/* My Tokenized Assets */}
       <section>
         <SectionHeader label="MY TOKENIZED ASSETS" count={myAssets.length} />
         {myAssets.length === 0 ? (
@@ -97,7 +89,7 @@ export function Portfolio() {
         )}
       </section>
 
-      {/* ── My Active Listings ── */}
+      {/* My Active Listings */}
       <section>
         <SectionHeader label="MY ACTIVE LISTINGS" count={activeListings.length} />
         {activeListings.length === 0 ? (
@@ -105,11 +97,13 @@ export function Portfolio() {
         ) : (
           <div className="space-y-3">
             {activeListings.map((l: any, i: number) => {
-              const assetName = assets.find(a => a.id === l.assetId)?.name || `Asset #${l.assetId}`;
-              const total = l.shareAmount * l.pricePerShare;
+              const assetName  = assets.find(a => a.id === l.assetId)?.name || `Asset #${l.assetId}`;
+              const shareAmt   = BigInt(l.shareAmount);
+              const pricePerSh = BigInt(l.pricePerShare);
+              const total      = shareAmt * pricePerSh;
               return (
                 <motion.div
-                  key={l.listingId.toString()}
+                  key={String(l.listingId)}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06 }}
@@ -118,7 +112,7 @@ export function Portfolio() {
                   <div>
                     <div className="font-display text-base text-platinum">{assetName}</div>
                     <div className="font-mono text-[9px] text-mist mt-0.5">
-                      {Number(l.shareAmount).toLocaleString()} shares @ {formatRitual(l.pricePerShare)} RITUAL each
+                      {Number(shareAmt).toLocaleString()} shares @ {formatRitual(pricePerSh)} RITUAL each
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
@@ -127,7 +121,7 @@ export function Portfolio() {
                       <div className="font-mono text-sm text-gold">{formatRitual(total)} RITUAL</div>
                     </div>
                     <button
-                      onClick={async () => { await cancelListing(l.listingId); refetchListings(); }}
+                      onClick={async () => { await cancelListing(BigInt(l.listingId)); refetchListings(); }}
                       className="px-4 py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all font-mono text-[9px] tracking-widest uppercase"
                     >
                       CANCEL
@@ -140,7 +134,7 @@ export function Portfolio() {
         )}
       </section>
 
-      {/* ── My Active Offers ── */}
+      {/* My Active Offers */}
       <section>
         <SectionHeader label="MY ACTIVE OFFERS" count={activeOffers.length} />
         {activeOffers.length === 0 ? (
@@ -148,13 +142,14 @@ export function Portfolio() {
         ) : (
           <div className="space-y-3">
             {activeOffers.map((o: any, i: number) => {
-              const assetName = assets.find(a => a.id === o.assetId)?.name || `Asset #${o.assetId}`;
-              const total      = o.shareAmount * o.pricePerShare;
-              const expiresIn  = Number(o.expiresAt) * 1000 - Date.now();
-              const daysLeft   = Math.max(0, Math.floor(expiresIn / 86400000));
+              const assetName  = assets.find(a => a.id === o.assetId)?.name || `Asset #${o.assetId}`;
+              const shareAmt   = BigInt(o.shareAmount);
+              const pricePerSh = BigInt(o.pricePerShare);
+              const total      = shareAmt * pricePerSh;
+              const daysLeft   = Math.max(0, Math.floor((Number(o.expiresAt) * 1000 - Date.now()) / 86400000));
               return (
                 <motion.div
-                  key={o.offerId.toString()}
+                  key={String(o.offerId)}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06 }}
@@ -163,8 +158,7 @@ export function Portfolio() {
                   <div>
                     <div className="font-display text-base text-platinum">{assetName}</div>
                     <div className="font-mono text-[9px] text-mist mt-0.5">
-                      {Number(o.shareAmount).toLocaleString()} shares @ {formatRitual(o.pricePerShare)} RITUAL each
-                      · Expires in {daysLeft}d
+                      {Number(shareAmt).toLocaleString()} shares @ {formatRitual(pricePerSh)} RITUAL each · Expires in {daysLeft}d
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
@@ -173,7 +167,7 @@ export function Portfolio() {
                       <div className="font-mono text-sm text-gold">{formatRitual(total)} RITUAL</div>
                     </div>
                     <button
-                      onClick={async () => { await cancelOffer(o.offerId); refetchOffers(); }}
+                      onClick={async () => { await cancelOffer(BigInt(o.offerId)); refetchOffers(); }}
                       className="px-4 py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all font-mono text-[9px] tracking-widest uppercase"
                     >
                       CANCEL & RECLAIM
@@ -190,8 +184,6 @@ export function Portfolio() {
   );
 }
 
-// ── Share balance sub-component ───────────────────────────────────────────────
-
 function ShareBalance({ assetId, holder }: { assetId: bigint; holder: `0x${string}` }) {
   const { data } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -202,8 +194,6 @@ function ShareBalance({ assetId, holder }: { assetId: bigint; holder: `0x${strin
   const balance = (data as bigint | undefined) ?? 0n;
   return <>{Number(balance).toLocaleString()}</>;
 }
-
-// ── Pending withdrawal badge ──────────────────────────────────────────────────
 
 function PendingWithdrawal({ assetId, recipient }: { assetId: bigint; recipient: `0x${string}` }) {
   const pending = usePendingWithdrawals(assetId, recipient);
@@ -223,8 +213,6 @@ function PendingWithdrawal({ assetId, recipient }: { assetId: bigint; recipient:
     </div>
   );
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function SectionHeader({ label, count }: { label: string; count: number }) {
   return (
